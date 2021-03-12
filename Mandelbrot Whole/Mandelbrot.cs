@@ -40,6 +40,28 @@ namespace Mandelbrot_Whole
             Bitmap bm = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 
 
+            for (int x = 0; x < pictureBox1.Width; x++)
+            {
+                for (int y = 0; y < pictureBox1.Height; y++)
+                {
+                    double a = (double)(xMove + x - (pictureBox1.Width / 2)) / (double)(pictureBox1.Width / 4) / zoom;
+                    double b = (double)(yMove + y - (pictureBox1.Height / 2)) / (double)(pictureBox1.Height / 4) / zoom;
+
+                    Complex c = new Complex { A = a, B = b };
+                    Complex z = new Complex { A = 0, B = 0 };
+
+                    int i = 0;
+                    do
+                    {
+                        i++;
+                        z.Square();
+                        z.Add(c);
+                        if (z.Magnitude() > 2.0) break;
+                    }
+                    while (i < quality);
+                    bm.SetPixel(x, y, i < quality ? Color.FromArgb(20, 20, i) : Color.Black);
+                }
+            }
 
 
 
@@ -48,7 +70,6 @@ namespace Mandelbrot_Whole
 
 
 
-    
             pictureBox1.Image = bm;
         }
 
@@ -132,27 +153,4 @@ namespace Mandelbrot_Whole
 
     }
 }
-
-
-/*      for (int x = 0; x < pictureBox1.Width; x++)
-          {
-              for (int y = 0; y < pictureBox1.Height; y++)
-              {
-                  double a = (double)(xMove + x - (pictureBox1.Width / 2)) / (double)(pictureBox1.Width/4 ) / zoom;
-                  double b = (double)(yMove + y - (pictureBox1.Height / 2)) / (double)(pictureBox1.Height/4) / zoom;
-
-                  Complex c = new Complex { A = a, B = b };
-                  Complex z = new Complex { A = 0, B = 0 };
-
-                  int i = 0;
-                  do
-                  {
-                      i++;
-                      z.Square();
-                      z.Add(c);
-                      if (z.Magnitude() > 2.0) break;
-                  }
-                  while (i < quality);
-                  bm.SetPixel(x, y, i < quality ? Color.FromArgb(20, 20, i) : Color.Black);
-              }
-          }*/
+    
