@@ -13,15 +13,16 @@ namespace Mandelbrot_Whole
     public partial class Mandelbrot : Form
     {
 
-        int quality = 100;
+        public static double[] center = { 0,0 };
+
+        int maxIterations = 1000;
         double zoom = 1;
 
-        double[] XRange = new double[] { 0, 0 };
-        double[] YRange = new double[] { 0, 0 };
-
-        double startingX=0;
-        double startingY=0;
-
+        int WidthPixel;
+        int HeightPixel;
+    
+        int[] XRange = new int[] { 0, 0 };
+        int[] YRange = new int[] { 0, 0 };
 
         public Mandelbrot()
         {
@@ -29,25 +30,25 @@ namespace Mandelbrot_Whole
         }   
         private void Mandelbrot_Shown(object sender, EventArgs e)
         {
+            WidthPixel = pictureBox1.Width;
+            HeightPixel = pictureBox1.Height;
+
             DrawMandelbrot();
         }
         private void DrawMandelbrot()
-        {
+        {          
+            Bitmap bm = new Bitmap(WidthPixel, HeightPixel);
 
-            double xMove = XRange[0];
-            double yMove = YRange[0];
-
-            Bitmap bm = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            double increment = 4 / zoom / Diameter();
 
 
-            for (int x = 0; x < pictureBox1.Width; x++)
-            {
-                for (int y = 0; y < pictureBox1.Height; y++)
+            for (int xPixel= 0; xPixel < WidthPixel; xPixel++ )
+            {           
+
+                for (int yPixel = 0; yPixel < HeightPixel; yPixel++)
                 {
-                    double a = (double)(xMove + x - (pictureBox1.Width / 2)) / (double)(pictureBox1.Width / 4) / zoom;
-                    double b = (double)(yMove + y - (pictureBox1.Height / 2)) / (double)(pictureBox1.Height / 4) / zoom;
-
-                    Complex c = new Complex { A = a, B = b };
+                    
+                    Complex c = constant(increment,xPixel,yPixel);
                     Complex z = new Complex { A = 0, B = 0 };
 
                     int i = 0;
@@ -58,18 +59,11 @@ namespace Mandelbrot_Whole
                         z.Add(c);
                         if (z.Magnitude() > 2.0) break;
                     }
-                    while (i < quality);
-                    bm.SetPixel(x, y, i < quality ? Color.FromArgb(20, 20, i) : Color.Black);
+                    while (i < maxIterations);
+
+                    bm.SetPixel(xPixel, yPixel, i < maxIterations ? Color.FromArgb(20, 20, i%255) : Color.Black);
                 }
             }
-
-
-
-
-
-
-
-
             pictureBox1.Image = bm;
         }
 
@@ -81,18 +75,55 @@ namespace Mandelbrot_Whole
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            XRange[1] = e.X;
-            YRange[1] = e.Y;
+            XRange[1] = e.X+1;
+            YRange[1] = e.Y+1;
+      
+            FixTables();
             AdjustAspectRatio();
+            ZoomIn();
+
+            DrawMandelbrot();
         }
 
+        public Complex constant(double increment, int x, int y)
+        {
+            if (increment == 0)
+            {
+                increment = 4 / zoom / Diameter();
+            }
+
+
+            Complex c = new Complex{
+                A= (-increment*WidthPixel/2  +  center[0] + increment*x),
+                B= ( increment*HeightPixel/2 +  center[1] - increment*y) 
+            };
+            return c;
+        }
+        private void ZoomIn()
+        {
+           // startingX += XRange[0] / WidthPixel / zoom;
+          // startingY -= YRange[0] / HeightPixel/ zoom;
+
+            Complex start, end;
+
+            start = constant(0, XRange[0], YRange[0]);
+            end = constant(0, XRange[1], YRange[1]);
+
+
+            center[0] = (start.A+end.A) / 2;
+            center[1] = (start.B+ end.B) / 2;
+
+            var zoomTemp = WidthPixel / (XRange[1] - XRange[0]);
+            zoom *= zoomTemp;
+
+
+        }
         
         private void AdjustAspectRatio()
         {
-            FixTables();
             //TODO - just a click is 0/0?
             var ratio = Math.Abs(XRange[1] - XRange[0]) / Math.Abs(YRange[1] - YRange[0]);
-            var sratio = pictureBox1.Width / pictureBox1.Height;
+            var sratio = WidthPixel / HeightPixel;
             if (sratio > ratio)
             {
                 var xf = sratio / ratio;
@@ -108,47 +139,41 @@ namespace Mandelbrot_Whole
                 zoom *= yf;
             }
             
-
-            DrawMandelbrot();
         }
         //making first field always smaller
         private void FixTables()
         {
             if (XRange[0] > XRange[1])
             {
-                double temp = XRange[1];
+                int temp = XRange[1];
                 XRange[1] = XRange[0];
                 XRange[0] = temp;
 
             }
             if (YRange[0] > YRange[1])
             {
-                double temp = YRange[1];
+                int temp = YRange[1];
                 YRange[1] = YRange[0];
                 YRange[0] = temp;
 
+            }     
+            
+           int diference = (XRange[1] - XRange[0]) - (YRange[1] - YRange[0]);
+
+            if ((XRange[1]-XRange[0])<(YRange[1]-YRange[0]))
+            {
+                XRange[1] += Math.Abs(diference);
             }
+            else
+            {
+                YRange[1] += Math.Abs(diference);
+            }
+          
+
         }
-        private void SetWindow()
-        { 
-            if(startingX==0)
-            {
-                startingX = XRange[0]-pictureBox1.Width/2;
-            }
-            else
-            {
-
-            }
-            if (startingY == 0)
-            {
-                startingY = YRange[0] - pictureBox1.Height / 2;
-            }
-            else
-            {
-
-            }
-
-
+        public double Diameter()
+        {           
+            return Math.Min(HeightPixel, WidthPixel);
         }
 
     }
