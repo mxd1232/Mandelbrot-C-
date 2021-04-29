@@ -1,0 +1,13 @@
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\bin\Debug\netcoreapp3.1\ClientMandelbrot.exe
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\bin\Debug\netcoreapp3.1\ClientMandelbrot.deps.json
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\bin\Debug\netcoreapp3.1\ClientMandelbrot.runtimeconfig.json
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\bin\Debug\netcoreapp3.1\ClientMandelbrot.runtimeconfig.dev.json
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\bin\Debug\netcoreapp3.1\ClientMandelbrot.dll
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\bin\Debug\netcoreapp3.1\ClientMandelbrot.pdb
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.csprojAssemblyReference.cache
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.AssemblyInfoInputs.cache
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.AssemblyInfo.cs
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.csproj.CoreCompileInputs.cache
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.dll
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.pdb
+C:\Users\Mikołaj\source\repos\Mandelbrot\ClientMandelbrot\obj\Debug\netcoreapp3.1\ClientMandelbrot.genruntimeconfig.cache
