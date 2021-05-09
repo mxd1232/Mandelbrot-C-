@@ -10,13 +10,9 @@ namespace ServerMandelbrot
 {
     class ConverterJSON
     {
-        public static void CreateJSON(MandelbrotJSON mandelbrotJSON)
-        {
-            string directory = Directory.GetCurrentDirectory();
+        public static string RecievedFilePath { get; set; } = "../../../json/recieved.json";
+        public static string CreatedFilePath { get; internal set; }
 
-            string jsonString = JsonSerializer.Serialize(mandelbrotJSON);
-            File.WriteAllText("../../../json/created.json", jsonString);
-        }
         public static MandelbrotJSON ReadJSON(string filePath)
         {
             string jsonString = File.ReadAllText(filePath);
@@ -27,10 +23,6 @@ namespace ServerMandelbrot
         public static MandelbrotJSON ReadFromString(string message)
         {
             return JsonSerializer.Deserialize<MandelbrotJSON>(message);
-        }
-        public static string WriteFromObject(MandelbrotJSON mandelbrotJSON)
-        {
-            return JsonSerializer.Serialize(mandelbrotJSON);
         }
     }
 }

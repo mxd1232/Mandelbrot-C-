@@ -10,6 +10,5 @@
         public int WidthPixel { get; set; }
         public int HeightPixel { get; set; }
 
-        public int[][] MandelbrotMatrix { get; set; }
     }
 }

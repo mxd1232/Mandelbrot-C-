@@ -30,7 +30,8 @@ namespace Mandelbrot_Whole
             InitializeComponent();
         
             
-            //TODO -TCP IP    TcpConnector.ConnectToTCP();
+            //TODO -TCP IP    
+            TcpConnector.ConnectToTCP();
             
         }   
         private void Mandelbrot_Shown(object sender, EventArgs e)
@@ -38,39 +39,16 @@ namespace Mandelbrot_Whole
             WidthPixel = pictureBox1.Width;
             HeightPixel = pictureBox1.Height;
 
-            ComputeMandelbrot();
+            DrawMandelbrot();
         }
-        private void ComputeMandelbrot()
+        private void DrawMandelbrot()
         {
            string message = CreateMandelbrotRequestObject();
+        
+           TcpConnector.Send();
+           Bitmap bitmap = TcpConnector.Recieve();
 
-
-
-
-
-            /* 
-             *  TcpConnector.Send(message);
-             * MandelbrotJSON mandelbrotJSON = ConverterJSON.ReadFromString(TcpConnector.Recieve());
-            */
-            // TODO - tcp/ip connection
-
-            MandelbrotJSON mandelbrotJSON = ConverterJSON.ReadJSON("../../json/recieved.json");
-
-            Bitmap bm = new Bitmap(WidthPixel, HeightPixel);
-
-
-            for (int xPixel = 0; xPixel < WidthPixel; xPixel++)
-            {
-
-                for (int yPixel = 0; yPixel < HeightPixel; yPixel++)
-                {
-                    int i = mandelbrotJSON.MandelbrotMatrix[xPixel][yPixel];
-
-                    bm.SetPixel(xPixel, yPixel, i < maxIterations ? Color.FromArgb(20, 20, i % 255) : Color.Black);
-                }
-            }
-
-            pictureBox1.Image = bm;
+            pictureBox1.Image = bitmap;
         }
 
         private string CreateMandelbrotRequestObject()
@@ -103,7 +81,7 @@ namespace Mandelbrot_Whole
             AdjustAspectRatio();
             ZoomIn();
 
-            ComputeMandelbrot();
+            DrawMandelbrot();
         }
 
         public Complex Constant(double increment, int x, int y)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 
 namespace ClientMandelbrot
 {
@@ -15,10 +16,7 @@ namespace ClientMandelbrot
 
         int WidthPixel = 700;
         int HeightPixel = 700;
-
-
-        public List<List<int>> MandelbrotIterations = new List<List<int>>();
-
+  
         public Computation()
         {
 
@@ -31,8 +29,10 @@ namespace ClientMandelbrot
             WidthPixel = mandelbrotJSON.WidthPixel;
             HeightPixel = mandelbrotJSON.HeightPixel;
         }
-        public void ComputeMandelbrot()
+        public Bitmap ComputeMandelbrot()
         {
+
+            Bitmap bitmap = new Bitmap(WidthPixel, HeightPixel);
 
             double increment = 4 / zoom / Diameter();
 
@@ -44,7 +44,7 @@ namespace ClientMandelbrot
                 for (int yPixel = 0; yPixel < HeightPixel; yPixel++)
                 {
 
-                    Complex c = constant(increment, xPixel, yPixel);
+                    Complex c = Constant(increment, xPixel, yPixel);
                     Complex z = new Complex { A = 0, B = 0 };
 
                     int i = 0;
@@ -56,33 +56,16 @@ namespace ClientMandelbrot
                         if (z.Magnitude() > 2.0) break;
                     }
                     while (i < maxIterations);
-                    PixelList.Add(i);
+                    bitmap.SetPixel(xPixel, yPixel, i < maxIterations ? Color.FromArgb(20, 20, i % 255) : Color.Black);
+                  
                 }
-                MandelbrotIterations.Add(PixelList);
+               
             }
-        }
+            return bitmap;
+        }    
 
-        public MandelbrotJSON CreateMandelbrotObject()
-        {
-            MandelbrotJSON mandelbrotJSON = new MandelbrotJSON()
-            {
-                Center = center,
-                Zoom = zoom,
-                HeightPixel = HeightPixel,
-                WidthPixel = WidthPixel,
-                MaxIterations = maxIterations,
-                MandelbrotMatrix = ListToMatrix(MandelbrotIterations)
-            };
-            return mandelbrotJSON;
-        }
-        public int[][] ListToMatrix(List<List<int>> mandelbrot)
-        {
-            int[][] arrays = mandelbrot.Select(a => a.ToArray()).ToArray();
 
-            return arrays;
-        }
-
-        public Complex constant(double increment, int x, int y)
+        public Complex Constant(double increment, int x, int y)
         {
             if (increment == 0)
             {

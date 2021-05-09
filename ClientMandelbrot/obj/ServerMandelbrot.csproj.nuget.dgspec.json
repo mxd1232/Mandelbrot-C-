@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mikołaj\\source\\repos\\Mandelbrot\\ClientMandelbrot\\ServerMandelbrot.csproj": {}
+    "C:\\Users\\Mikołaj\\Desktop\\MandelbrotRepo\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mikołaj\\source\\repos\\Mandelbrot\\ClientMandelbrot\\ServerMandelbrot.csproj": {
+    "C:\\Users\\Mikołaj\\Desktop\\MandelbrotRepo\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mikołaj\\source\\repos\\Mandelbrot\\ClientMandelbrot\\ServerMandelbrot.csproj",
+        "projectUniqueName": "C:\\Users\\Mikołaj\\Desktop\\MandelbrotRepo\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
         "projectName": "ServerMandelbrot",
-        "projectPath": "C:\\Users\\Mikołaj\\source\\repos\\Mandelbrot\\ClientMandelbrot\\ServerMandelbrot.csproj",
+        "projectPath": "C:\\Users\\Mikołaj\\Desktop\\MandelbrotRepo\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
         "packagesPath": "C:\\Users\\Mikołaj\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mikołaj\\source\\repos\\Mandelbrot\\ClientMandelbrot\\obj\\",
+        "outputPath": "C:\\Users\\Mikołaj\\Desktop\\MandelbrotRepo\\Mandelbrot-C-\\ClientMandelbrot\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mikołaj\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -39,6 +39,12 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[5.0.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

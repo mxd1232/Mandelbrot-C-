@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -12,57 +14,126 @@ namespace Mandelbrot_Whole
     class TcpConnector
     {
         private static TcpListener tcpLsn;
-        private static Socket sckt;
+        private static Socket socket;
 
 
-        public static string Recieve()
+        public static Bitmap Recieve()
         {
+            Bitmap bmpReturn = null;
 
-                Byte[] recievedBytes = new Byte[2000000];
-                try
-                {
-                    int ret = sckt.Receive(recievedBytes, recievedBytes.Length, 0);
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    Console.WriteLine("Client left");
+            Byte[] recievedBytes = new Byte[1000000];
+            try
+            {
+                int ret = socket.Receive(recievedBytes, recievedBytes.Length, 0);
 
-                }
-                string tmp = null;
-                tmp = System.Text.Encoding.ASCII.GetString(recievedBytes);
-                if (tmp.Length > 0)
-                {
-                    tmp = CleanUpMessage(tmp);                
-                }
-            return tmp;
+
+                MemoryStream memoryStream = new MemoryStream(recievedBytes);
+                memoryStream.Position = 0;
+                bmpReturn = (Bitmap)Bitmap.FromStream(memoryStream);
+
+
+                memoryStream.Close();
+                memoryStream = null;
+
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                Console.WriteLine("Serwer left");
+            }
+
+
+
+            return bmpReturn;
+
+            //while (true)
+            //{
+            //	//creating object of TcpClient to catch the stream of connected computer
+            //	TcpClient client = tcpLsn.AcceptTcpClient();
+
+            //	//getting the networkclient stream object
+            //	NetworkStream clientstream = client.GetStream();
+
+            //	//creating streamreader object to read messages from client
+            //	StreamReader reader = new StreamReader(clientstream);
+
+            //	// reading file name from client
+            //	string sourcefile = reader.ReadLine();
+
+            //	Stream inputstream;
+            //	try
+            //	{
+            //		//opening file in read mode
+            //		inputstream = File.OpenRead(sourcefile);
+            //	}
+            //	catch
+            //	{
+            //		Console.WriteLine("\n\n  File not found named: {0}", sourcefile);
+
+            //		clientstream.Close();
+            //		continue;
+            //	}
+            //	const int sizebuff = 1024;
+            //	try
+            //	{
+            //		/*creating the bufferedstrem object for reading 1024 size of bytes from the 
+            //			file */
+            //		BufferedStream bufferedinput = new BufferedStream(inputstream);
+
+            //		/*creating the bufferedstrem object for sending bytes which are read 
+            //			from file   */
+            //		BufferedStream bufferedoutput = new BufferedStream(clientstream);
+
+            //		/* creating array of bytes size is 1024 */
+            //		byte[] buffer = new Byte[sizebuff];
+            //		int bytesread;
+
+            //		/* Reading bytes from the file until the end */
+            //		while ((bytesread = bufferedinput.Read(buffer, 0, sizebuff)) > 0)
+            //		{
+            //			/* sending the bytes to the client */
+            //			bufferedoutput.Write(buffer, 0, bytesread);
+            //		}
+            //		Console.WriteLine("\n\n    file copied name:{0}", sourcefile);
+
+            //		/* Closing connections*/
+            //		bufferedoutput.Flush();
+            //		bufferedinput.Close();
+            //		bufferedoutput.Close();
+            //	}
+            //	catch (Exception)
+            //	{
+            //		Console.WriteLine("\n\n Connection Couldnot Esablished  because Client forget to create-\n \"ftpService\" folder in his (C) Drive or his/her harddisk is full or Client close its Connection in between process");
+            //		reader.Close();
+            //		continue;
+            //	}
+
+            //	reader.Close();
+            //}
         }
 
+        public static void Send()
+        {
+            try
+            {
+                socket.SendFile(ConverterJSON.CreatedFilePath);
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                Console.WriteLine("Serwer left");
+            }
 
-        public static void Send(string message)
-        {      
-                Byte[] byteData = Encoding.ASCII.GetBytes(message.ToCharArray());
-                try
-                {
-                    sckt.Send(byteData, byteData.Length, 0);
-                }
-                catch (SocketException)
-                {
-                    Console.WriteLine("Client left");
-
-                }
-                Console.WriteLine(message);
-          
         }
         public static void End()
         {
-            sckt.Close();
+            socket.Close();
             tcpLsn.Stop();
         }
         public static void Serve()
         {
             tcpLsn = new TcpListener(IPAddress.Parse("127.0.0.1"), 2222);
             tcpLsn.Start();
-            sckt = tcpLsn.AcceptSocket();
+
+            socket = tcpLsn.AcceptSocket();
         }
 
         public static void ConnectToTCP()
