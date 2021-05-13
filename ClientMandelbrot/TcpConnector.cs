@@ -35,9 +35,7 @@ namespace ServerMandelbrot
                 }               
         }
         public static string Recieve()
-        {
-           
-
+        {       
                 Byte[] recievedBytes = new Byte[1000];
                 try
                 {
@@ -57,6 +55,7 @@ namespace ServerMandelbrot
                         Console.WriteLine("Serwer left");
                     }
                 }
+            Console.WriteLine(message);
             return message;
         }
 
@@ -67,7 +66,7 @@ namespace ServerMandelbrot
             int port = 2222;
             IPEndPoint EPhost = new IPEndPoint(hostadd, port);
             socket.Connect(EPhost);
-            Console.WriteLine(" client ");
+            Console.WriteLine(" Poprawne polączenie ");
 
         }
          public static void ConnectToTCP()
