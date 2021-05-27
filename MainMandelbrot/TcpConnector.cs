@@ -13,22 +13,22 @@ namespace Mandelbrot_Whole
 {
     class TcpConnector
     {
-        private static TcpListener tcpLsn;
-        private static Socket socket;
+        public static List<Socket> sockets = new List<Socket>();
 
 
-        public static Bitmap Recieve()
+        public static Bitmap Recieve(int scktID)
         {
             Bitmap bmpReturn = null;
 
             Byte[] recievedBytes = new Byte[1000000];
             try
             {
-                int ret = socket.Receive(recievedBytes, recievedBytes.Length, 0);
+                int ret = sockets[scktID].Receive(recievedBytes, recievedBytes.Length, 0);
 
 
                 MemoryStream memoryStream = new MemoryStream(recievedBytes);
                 memoryStream.Position = 0;
+              //  bmpReturn = new Bitmap(memoryStream);
                 bmpReturn = (Bitmap)Bitmap.FromStream(memoryStream);
 
 
@@ -111,11 +111,12 @@ namespace Mandelbrot_Whole
             //}
         }
 
-        public static void Send()
+        public static void Send(int scktID)
         {
             try
             {
-                socket.SendFile(ConverterJSON.CreatedFilePath);
+                sockets[scktID].SendFile(ConverterJSON.CreatedFilePath);
+              
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -123,28 +124,30 @@ namespace Mandelbrot_Whole
             }
 
         }
-        public static void End()
-        {
-            socket.Close();
-            tcpLsn.Stop();
-        }
-        public static void Serve()
-        {
-            tcpLsn = new TcpListener(IPAddress.Parse("127.0.0.1"), 2222);
-            tcpLsn.Start();
 
-            socket = tcpLsn.AcceptSocket();
-        }
-
-        public static void ConnectToTCP()
+        private static void Connect(string ipAddres, int port)
         {
-            Console.WriteLine("server");
-            Serve();
+            //"127.0.0.1" - ip
 
             
 
+            Socket sckt = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            IPAddress hostadd = IPAddress.Parse(ipAddres);
+           // int port = 2222;
+            IPEndPoint EPhost = new IPEndPoint(hostadd, port);
+            sckt.Connect(EPhost);
+            Console.WriteLine(" Poprawne polączenie ");
+
+            sockets.Add(sckt);
 
         }
+        public static void ConnectToTCP(string ipAddres, int port)
+        {
+            Connect(ipAddres, port);
+
+        }
+
+      
 
         private static string CleanUpMessage(string message)
         {

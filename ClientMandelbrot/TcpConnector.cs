@@ -5,20 +5,22 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.IO;
+using System.Net.NetworkInformation;
 
 namespace ServerMandelbrot
 {
     class TcpConnector
     {
-
+        private static TcpListener tcpLsn;
         private static Socket socket;
 
         public static void Send(System.Drawing.Bitmap bitmap)
         {
+            
 
             MemoryStream ms = new MemoryStream();
             // Save to memory using the Jpeg format
-            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
             byte[] bmpBytes = ms.GetBuffer();
             bitmap.Dispose();
@@ -59,21 +61,43 @@ namespace ServerMandelbrot
             return message;
         }
 
-        private static void Connect()
+        public static void End()
         {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPAddress hostadd = IPAddress.Parse("127.0.0.1");
+            socket.Close();
+            tcpLsn.Stop();
+        }
+        public static void Serve()
+        {
+            
             int port = 2222;
-            IPEndPoint EPhost = new IPEndPoint(hostadd, port);
-            socket.Connect(EPhost);
-            Console.WriteLine(" Poprawne polączenie ");
 
+            while (true)
+            {
+
+                try
+                {
+                    tcpLsn = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
+                    
+                    tcpLsn.Start();
+                    socket = tcpLsn.AcceptSocket();
+
+                    return;
+                }
+                catch(Exception e)
+                {
+                   // Console.WriteLine(e.Message);
+                }
+                port++;
+            }
+           
         }
-         public static void ConnectToTCP()
+        public static void ConnectToTCP()
         {
-            Connect();
+            Console.WriteLine("server");
+            Serve();
 
         }
+
         private static string CleanUpMessage(string message)
         {
             return message.Replace("\0", string.Empty);

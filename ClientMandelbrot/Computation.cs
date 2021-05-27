@@ -65,6 +65,20 @@ namespace ClientMandelbrot
         }    
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public Complex Constant(double increment, int x, int y)
         {
             if (increment == 0)
