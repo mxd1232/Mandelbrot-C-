@@ -1,6 +1,6 @@
 ﻿using ServerMandelbrot;
 using System;
-
+using System.Drawing;
 
 namespace ClientMandelbrot
 {
@@ -12,23 +12,23 @@ namespace ClientMandelbrot
         {
 
             TcpConnector.ConnectToTCP();
-
+            ConnectionLoop();
+          
+        }
+        static void ConnectionLoop()
+        {
             while (true)
             {
                 string message = TcpConnector.Recieve();
-
-                MandelbrotJSON mandelbrotJSON = ConverterJSON.ReadFromString(message);
-
-                Computation computation = new Computation(mandelbrotJSON);
-
-                System.Drawing.Bitmap bitmap = computation.ComputeMandelbrot();
-
-
-                TcpConnector.Send(bitmap);
+                TcpConnector.Send(ManageComputationRequest(message));
             }
-          
         }
-       
+        static Bitmap ManageComputationRequest(string message)
+        {
+            MandelbrotJSON mandelbrotJSON = ConverterJSON.ReadFromString(message);
+            Computation computation = new Computation(mandelbrotJSON);
+            return computation.ComputeMandelbrot();
+        }
 
     }
 }
