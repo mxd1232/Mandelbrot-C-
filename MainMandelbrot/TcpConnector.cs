@@ -125,11 +125,9 @@ namespace Mandelbrot_Whole
 
         }
 
-        private static void Connect(string ipAddres, int port)
+        private static bool Connect(string ipAddres, int port)
         {
             //"127.0.0.1" - ip
-
-            
 
             Socket sckt = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPAddress hostadd = IPAddress.Parse(ipAddres);
@@ -137,13 +135,28 @@ namespace Mandelbrot_Whole
             IPEndPoint EPhost = new IPEndPoint(hostadd, port);
             sckt.Connect(EPhost);
             Console.WriteLine(" Poprawne polączenie ");
-
-            sockets.Add(sckt);
+            if (sckt.Connected)
+            {
+                sockets.Add(sckt);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
 
         }
-        public static void ConnectToTCP(string ipAddres, int port)
+        public static bool ConnectToTCP(string ipAddres, int port)
         {
-            Connect(ipAddres, port);
+            if (Connect(ipAddres, port))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
         }
 

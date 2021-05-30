@@ -7,12 +7,15 @@ using System.Threading;
 using System.IO;
 using System.Net.NetworkInformation;
 
+
 namespace ServerMandelbrot
 {
     class TcpConnector
     {
         private static TcpListener tcpLsn;
         private static Socket socket;
+      //  private string hostName = Dns.GetHostName();
+      //  private IPAddress[] localIP = Dns.GetHostAddresses(Dns.GetHostName));
 
         public static void Send(System.Drawing.Bitmap bitmap)
         {
@@ -68,33 +71,44 @@ namespace ServerMandelbrot
         }
         public static void Serve()
         {
-            
-            int port = 2222;
+
+            Console.WriteLine("Enter ip: ");
+            string serverIp = Console.ReadLine();
+
+            Console.WriteLine("Enter port: ");
+
+            int port = Convert.ToInt32(Console.ReadLine());
 
             while (true)
             {
 
                 try
                 {
-                    tcpLsn = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
+                    tcpLsn = new TcpListener(IPAddress.Parse(serverIp), port);
                     
                     tcpLsn.Start();
+                    Console.WriteLine("Waiting on IP: {0}, port: {1}", serverIp, port);
                     socket = tcpLsn.AcceptSocket();
-
-                    return;
+                    break;
                 }
                 catch(Exception e)
                 {
-                   // Console.WriteLine(e.Message);
+                    //Console.WriteLine(e.Message);
+
+                    port++;
+                    Console.WriteLine("Port taken. Trying port: "+ port);
                 }
-                port++;
+
+
             }
            
         }
         public static void ConnectToTCP()
         {
-            Console.WriteLine("server");
+
             Serve();
+            Console.WriteLine("Connected");
+
 
         }
 

@@ -40,7 +40,7 @@ namespace Mandelbrot_Whole
 
             //TODO -TCP IP    
             TcpConnector.ConnectToTCP("127.0.0.1",2222);
-            TcpConnector.ConnectToTCP("127.0.0.1", 2223);
+           // TcpConnector.ConnectToTCP("127.0.0.1", 2223);
 
         }
         private void Mandelbrot_Shown(object sender, EventArgs e)
@@ -66,7 +66,7 @@ namespace Mandelbrot_Whole
            TcpConnector.Send(scktID);
            Bitmap bitmap = TcpConnector.Recieve(scktID);
 
-            bitmap.Save("Saves/save[" +i +"].png",ImageFormat.Png);
+            bitmap.Save("saves/save[" +i +"].png",ImageFormat.Png);
 
 
             pictureBox1.Image = bitmap;
@@ -106,8 +106,6 @@ namespace Mandelbrot_Whole
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-     
-
             XRange[0] = e.X;
             YRange[0] = e.Y;
         }
@@ -314,6 +312,35 @@ namespace Mandelbrot_Whole
             return Math.Min(HeightPixel, WidthPixel);
         }
 
+        private void Mandelbrot_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            //127.0.0.1
+            Int32 serverPort = Convert.ToInt32(serverPortText.Text);
+            String serverIP = serverIPText.Text;
+
+            if((serverPort != 0) && (serverIP.Length >= 9))
+            {
+                if(TcpConnector.ConnectToTCP(serverIP, serverPort))
+                {
+                    statusLabel.Text = "Connected";
+                }
+                else
+                {
+                    statusLabel.Text = "Error";
+                }
+                
+            }
+            else
+            {
+                statusLabel.Text = "Wrong data";
+            }
+
+        }
     }
 }
     
