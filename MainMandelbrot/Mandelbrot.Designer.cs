@@ -37,6 +37,7 @@ namespace Mandelbrot_Whole
             this.serverPortText = new System.Windows.Forms.TextBox();
             this.connectButton = new System.Windows.Forms.Button();
             this.statusLabel = new System.Windows.Forms.Label();
+            this.sendingButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,7 +48,9 @@ namespace Mandelbrot_Whole
             this.pictureBox1.Size = new System.Drawing.Size(700, 700);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
             // label1
@@ -113,11 +116,22 @@ namespace Mandelbrot_Whole
             this.statusLabel.Size = new System.Drawing.Size(0, 16);
             this.statusLabel.TabIndex = 7;
             // 
+            // sendingButton
+            // 
+            this.sendingButton.Location = new System.Drawing.Point(842, 616);
+            this.sendingButton.Name = "sendingButton";
+            this.sendingButton.Size = new System.Drawing.Size(75, 23);
+            this.sendingButton.TabIndex = 8;
+            this.sendingButton.Text = "Generate";
+            this.sendingButton.UseVisualStyleBackColor = true;
+            this.sendingButton.Click += new System.EventHandler(this.sendingButton_Click);
+            // 
             // Mandelbrot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(939, 728);
+            this.Controls.Add(this.sendingButton);
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.serverPortText);
@@ -146,6 +160,7 @@ namespace Mandelbrot_Whole
         private System.Windows.Forms.TextBox serverPortText;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.Label statusLabel;
+        private System.Windows.Forms.Button sendingButton;
     }
 }
 

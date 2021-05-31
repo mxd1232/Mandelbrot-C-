@@ -32,6 +32,12 @@ namespace Mandelbrot_Whole
         int[] XRange = new int[] { 0, 0 };
         int[] YRange = new int[] { 0, 0 };
 
+        Point rectanglePoint;
+        Point rectangleEndpoint;
+
+        bool isMouseDown = false;
+        Rectangle rectangle;
+
         public Mandelbrot()
         {
             InitializeComponent();
@@ -108,6 +114,8 @@ namespace Mandelbrot_Whole
         {
             XRange[0] = e.X;
             YRange[0] = e.Y;
+            rectanglePoint = new Point(e.X, e.Y);
+            isMouseDown = true;
         }
 
         private void ZoomLoop()
@@ -146,7 +154,9 @@ namespace Mandelbrot_Whole
 
                 DrawMandelbrot(ZoomIteration,i%(TcpConnector.sockets.Count));
                 //DrawMandelbrot(ZoomIteration,0);
-               
+
+
+                // Refresh(); z tą funkcja wyswietlane sa kolejne klatki
                 
                 ZoomIteration++;
                
@@ -158,20 +168,22 @@ namespace Mandelbrot_Whole
                 }
                 
             }
+            rectanglePoint = new Point(0,0);
+            rectangleEndpoint = new Point(0, 0);
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (isMouseDown == true)
+            {
 
+                XRange[1] = e.X + 1;
+                YRange[1] = e.Y + 1;
+                rectangleEndpoint = new Point(e.X + 1, e.Y + 1);
 
-            XRange[1] = e.X+1;
-            YRange[1] = e.Y+1;
-      
-            FixTables();
-            AdjustAspectRatio();
+                isMouseDown = false;
 
-
-            ZoomLoop();
+            }
             
 
           //  ZoomIn();
@@ -340,6 +352,45 @@ namespace Mandelbrot_Whole
                 statusLabel.Text = "Wrong data";
             }
 
+        }
+
+        private void sendingButton_Click(object sender, EventArgs e)
+        {
+            FixTables();
+            AdjustAspectRatio();
+            ZoomLoop();
+
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isMouseDown)
+            {
+                rectangleEndpoint = new Point(e.X, e.Y);
+
+                Refresh();
+            }
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            if(rectangle != null)
+            {
+                e.Graphics.DrawRectangle(Pens.White, GetRect());
+            }
+        }
+
+        private Rectangle GetRect()
+        {
+            rectangle = new Rectangle();
+
+            rectangle.X = Math.Min(rectanglePoint.X, rectangleEndpoint.X);
+            rectangle.Y = Math.Min(rectanglePoint.Y, rectangleEndpoint.Y);
+
+            rectangle.Width = Math.Abs(rectanglePoint.X - rectangleEndpoint.X);
+            rectangle.Height = Math.Abs(rectanglePoint.Y - rectangleEndpoint.Y);
+
+            return rectangle;
         }
     }
 }
