@@ -32,6 +32,12 @@ namespace Mandelbrot_Whole
         int[] XRange = new int[] { 0, 0 };
         int[] YRange = new int[] { 0, 0 };
 
+        Point rectanglePoint;
+        Point rectangleEndpoint;
+
+        bool isMouseDown = false;
+        Rectangle rectangle;
+
         public Mandelbrot()
         {
             InitializeComponent();
@@ -40,7 +46,7 @@ namespace Mandelbrot_Whole
 
             //TODO -TCP IP    
             TcpConnector.ConnectToTCP("127.0.0.1",2222);
-            TcpConnector.ConnectToTCP("127.0.0.1", 2223);
+           // TcpConnector.ConnectToTCP("127.0.0.1", 2223);
 
         }
         private void Mandelbrot_Shown(object sender, EventArgs e)
@@ -66,7 +72,7 @@ namespace Mandelbrot_Whole
            TcpConnector.Send(scktID);
            Bitmap bitmap = TcpConnector.Recieve(scktID);
 
-            bitmap.Save("Saves/save[" +i +"].png",ImageFormat.Png);
+            bitmap.Save("saves/save[" +i +"].png",ImageFormat.Png);
 
 
             pictureBox1.Image = bitmap;
@@ -106,10 +112,10 @@ namespace Mandelbrot_Whole
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-     
-
             XRange[0] = e.X;
             YRange[0] = e.Y;
+            rectanglePoint = new Point(e.X, e.Y);
+            isMouseDown = true;
         }
 
         private void ZoomLoop()
@@ -148,7 +154,9 @@ namespace Mandelbrot_Whole
 
                 DrawMandelbrot(ZoomIteration,i%(TcpConnector.sockets.Count));
                 //DrawMandelbrot(ZoomIteration,0);
-               
+
+
+                // Refresh(); z tą funkcja wyswietlane sa kolejne klatki
                 
                 ZoomIteration++;
                
@@ -160,20 +168,22 @@ namespace Mandelbrot_Whole
                 }
                 
             }
+            rectanglePoint = new Point(0,0);
+            rectangleEndpoint = new Point(0, 0);
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (isMouseDown == true)
+            {
 
+                XRange[1] = e.X + 1;
+                YRange[1] = e.Y + 1;
+                rectangleEndpoint = new Point(e.X + 1, e.Y + 1);
 
-            XRange[1] = e.X+1;
-            YRange[1] = e.Y+1;
-      
-            FixTables();
-            AdjustAspectRatio();
+                isMouseDown = false;
 
-
-            ZoomLoop();
+            }
             
 
           //  ZoomIn();
@@ -314,6 +324,74 @@ namespace Mandelbrot_Whole
             return Math.Min(HeightPixel, WidthPixel);
         }
 
+        private void Mandelbrot_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            //127.0.0.1
+            Int32 serverPort = Convert.ToInt32(serverPortText.Text);
+            String serverIP = serverIPText.Text;
+
+            if((serverPort != 0) && (serverIP.Length >= 9))
+            {
+                if(TcpConnector.ConnectToTCP(serverIP, serverPort))
+                {
+                    statusLabel.Text = "Connected";
+                }
+                else
+                {
+                    statusLabel.Text = "Error";
+                }
+                
+            }
+            else
+            {
+                statusLabel.Text = "Wrong data";
+            }
+
+        }
+
+        private void sendingButton_Click(object sender, EventArgs e)
+        {
+            FixTables();
+            AdjustAspectRatio();
+            ZoomLoop();
+
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isMouseDown)
+            {
+                rectangleEndpoint = new Point(e.X, e.Y);
+
+                Refresh();
+            }
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            if(rectangle != null)
+            {
+                e.Graphics.DrawRectangle(Pens.White, GetRect());
+            }
+        }
+
+        private Rectangle GetRect()
+        {
+            rectangle = new Rectangle();
+
+            rectangle.X = Math.Min(rectanglePoint.X, rectangleEndpoint.X);
+            rectangle.Y = Math.Min(rectanglePoint.Y, rectangleEndpoint.Y);
+
+            rectangle.Width = Math.Abs(rectanglePoint.X - rectangleEndpoint.X);
+            rectangle.Height = Math.Abs(rectanglePoint.Y - rectangleEndpoint.Y);
+
+            return rectangle;
+        }
     }
 }
     
