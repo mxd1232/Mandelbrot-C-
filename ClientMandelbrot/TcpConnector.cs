@@ -72,12 +72,14 @@ namespace ServerMandelbrot
         public static void Serve()
         {
 
-            Console.WriteLine("Enter ip: ");
-            string serverIp = Console.ReadLine();
+            //  Console.WriteLine("Enter ip: ");
+            // string serverIp = Console.ReadLine();
+            string serverIp = "127.0.0.1";
 
-            Console.WriteLine("Enter port: ");
+            //  Console.WriteLine("Enter port: ");
 
-            int port = Convert.ToInt32(Console.ReadLine());
+            // int port = Convert.ToInt32(Console.ReadLine());
+            int port = 2222;
 
             while (true)
             {

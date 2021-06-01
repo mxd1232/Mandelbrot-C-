@@ -26,6 +26,12 @@ namespace ClientMandelbrot
         static Bitmap ManageComputationRequest(string message)
         {
             MandelbrotJSON mandelbrotJSON = ConverterJSON.ReadFromString(message);
+            if(mandelbrotJSON==null)
+            {
+                TcpConnector.End();
+                TcpConnector.Serve();
+            }
+
             Computation computation = new Computation(mandelbrotJSON);
             return computation.ComputeMandelbrot();
         }

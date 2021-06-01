@@ -15,14 +15,40 @@ namespace ServerMandelbrot
 
         public static MandelbrotJSON ReadJSON(string filePath)
         {
-            string jsonString = File.ReadAllText(filePath);
-            MandelbrotJSON mandelbrotJSON = JsonSerializer.Deserialize<MandelbrotJSON>(jsonString);
+            try
+            {
+                string jsonString = File.ReadAllText(filePath);
+                MandelbrotJSON mandelbrotJSON = JsonSerializer.Deserialize<MandelbrotJSON>(jsonString);
 
-            return mandelbrotJSON;
+                return mandelbrotJSON;
+            }
+            catch
+            {
+               
+
+                TcpConnector.End();
+                TcpConnector.Serve();
+
+                return null;
+            }
+
+            
         }
         public static MandelbrotJSON ReadFromString(string message)
         {
-            return JsonSerializer.Deserialize<MandelbrotJSON>(message);
+            try
+            {
+
+                return JsonSerializer.Deserialize<MandelbrotJSON>(message);
+
+            }
+            catch
+            {
+                TcpConnector.End();
+                TcpConnector.Serve();
+                return null;
+            }
+
         }
     }
 }

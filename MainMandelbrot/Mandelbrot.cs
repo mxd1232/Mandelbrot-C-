@@ -41,12 +41,8 @@ namespace Mandelbrot_Whole
         public Mandelbrot()
         {
             InitializeComponent();
-
-
-
-            //TODO -TCP IP    
+            
             TcpConnector.ConnectToTCP("127.0.0.1",2222);
-           // TcpConnector.ConnectToTCP("127.0.0.1", 2223);
 
         }
         private void Mandelbrot_Shown(object sender, EventArgs e)
