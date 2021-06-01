@@ -14,6 +14,10 @@ namespace ServerMandelbrot
     {
         private static TcpListener tcpLsn;
         private static Socket socket;
+
+        
+
+
       //  private string hostName = Dns.GetHostName();
       //  private IPAddress[] localIP = Dns.GetHostAddresses(Dns.GetHostName));
 

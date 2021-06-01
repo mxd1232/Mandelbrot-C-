@@ -14,7 +14,10 @@ namespace Mandelbrot_Whole
     class TcpConnector
     {
         public static List<Socket> sockets = new List<Socket>();
+      
 
+        [ThreadStatic]
+        static Bitmap recievedBitmap;
 
         public static Bitmap Recieve(int scktID)
         {
@@ -47,12 +50,45 @@ namespace Mandelbrot_Whole
 
           
         }
+        /*
+        public static void RecieveThreaded(object scktID)
+        {
+            Bitmap bmpReturn = null;
 
-        public static void Send(int scktID)
+            Byte[] recievedBytes = new Byte[1000000];
+            try
+            {
+                int ret = sockets[(int)scktID].Receive(recievedBytes, recievedBytes.Length, 0);
+
+
+                MemoryStream memoryStream = new MemoryStream(recievedBytes);
+                memoryStream.Position = 0;
+                //  bmpReturn = new Bitmap(memoryStream);
+                bmpReturn = (Bitmap)Bitmap.FromStream(memoryStream);
+
+
+                memoryStream.Close();
+                memoryStream = null;
+
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                Console.WriteLine("Serwer left");
+            }
+
+
+
+            recievedBitmap= bmpReturn;
+
+
+        }
+        */
+
+        public static void Send(int scktID,string createdFilePath)
         {
             try
             {
-                sockets[scktID].SendFile(ConverterJSON.CreatedFilePath);
+                sockets[scktID].SendFile(createdFilePath);
               
             }
             catch (System.Net.Sockets.SocketException)
@@ -61,6 +97,22 @@ namespace Mandelbrot_Whole
             }
 
         }
+
+  /*      public static void SendThreaded(object scktID)
+        {
+            try
+            {
+                sockets[(int)scktID].SendFile(ConverterJSON.CreatedFilePath);
+
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                Console.WriteLine("Serwer left");
+            }
+
+        }
+  */
+
 
         private static bool Connect(string ipAddres, int port)
         {

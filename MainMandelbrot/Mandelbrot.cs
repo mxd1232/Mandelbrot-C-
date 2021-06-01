@@ -14,6 +14,10 @@ namespace Mandelbrot_Whole
 {
     public partial class Mandelbrot : Form
     {
+        static HashSet<int> TakenSocketIds = new HashSet<int>();
+
+
+        int NumberOfZooms = 10;
         int ZoomIteration = 0;
 
         public static double[] centerPrev  = { 0,0 };
@@ -63,18 +67,66 @@ namespace Mandelbrot_Whole
         }
         private void DrawMandelbrot(int i, int scktID)
         {
-           string message = CreateMandelbrotRequestObject();
-        
-           TcpConnector.Send(scktID);
-           Bitmap bitmap = TcpConnector.Recieve(scktID);
-
-            bitmap.Save("saves/save[" +i +"].png",ImageFormat.Png);
+            string createdFilePath = "../../json/created.json[" + i + "]";
 
 
-            pictureBox1.Image = bitmap;
+           string message = CreateMandelbrotRequestObject(createdFilePath);
 
-            
+            if(i%(NumberOfZooms-1)==0)
+            {
+                TcpConnector.Send(scktID, createdFilePath);
+                Bitmap bitmap = TcpConnector.Recieve(scktID);
+
+                bitmap.Save("saves/save[" + i + "].png", ImageFormat.Png);
+
+
+                pictureBox1.Image = bitmap;
+            }
+
+            else
+            {
+                while(TakenSocketIds.Contains(scktID))
+                {
+                    
+                    scktID++;
+                    if(scktID==TcpConnector.sockets.Count())
+                    {
+                        scktID = 0;
+                    }
+                    Thread.Sleep(10);
+                }
+
+                Thread communicationThread = new Thread(delegate ()
+                {
+                    RequestAsync(scktID, i);
+                });
+                communicationThread.Start();
+            }
+
+          /*  Thread sendThread = new Thread(TcpConnector.SendThreaded);
+            sendThread.Start(scktID);
+
+
+            Thread recieveThread = new Thread(TcpConnector.RecieveThreaded);
+            recieveThread.Start(scktID);
+          */         
+
         }
+        private static void RequestAsync(int scktID,int i)
+        {
+
+
+            TakenSocketIds.Add(scktID);
+
+            string createdFilePath = "../../json/created.json[" + i + "]";
+
+            TcpConnector.Send(scktID, createdFilePath);
+            Bitmap bitmap = TcpConnector.Recieve(scktID);
+            bitmap.Save("saves/save[" + i + "].png", ImageFormat.Png);
+
+            TakenSocketIds.Remove(scktID);
+        }
+
         private void ZoomIncrementaly(int XRange0, int YRange0, int XRange1,  int YRange1 )
         {
 
@@ -91,7 +143,7 @@ namespace Mandelbrot_Whole
             zoom *= zoomTemp;
 
         }
-        private string CreateMandelbrotRequestObject()
+        private string CreateMandelbrotRequestObject(string createdFilePath)
         {
             MandelbrotJSON mandelbrotJSON = new MandelbrotJSON()
             {
@@ -102,7 +154,7 @@ namespace Mandelbrot_Whole
                 MaxIterations = maxIterations
             };
 
-            return ConverterJSON.CreateJSON(mandelbrotJSON);
+            return ConverterJSON.CreateJSON(mandelbrotJSON,createdFilePath);
 
         }
 
@@ -116,13 +168,13 @@ namespace Mandelbrot_Whole
 
         private void ZoomLoop()
         {
-            int numberOfZooms = 10;
+            
 
-            int XIncrement0 = (XRange[0] - XRangeIncremental[0]) / numberOfZooms;
-            int YIncrement0 = (YRange[0] - YRangeIncremental[0]) / numberOfZooms;
+            int XIncrement0 = (XRange[0] - XRangeIncremental[0]) / NumberOfZooms;
+            int YIncrement0 = (YRange[0] - YRangeIncremental[0]) / NumberOfZooms;
 
-            int XIncrement1 = (XRangeIncremental[1] - XRange[1]) / numberOfZooms;
-            int YIncrement1 = (YRangeIncremental[1] - YRange[1]) / numberOfZooms;
+            int XIncrement1 = (XRangeIncremental[1] - XRange[1]) / NumberOfZooms;
+            int YIncrement1 = (YRangeIncremental[1] - YRange[1]) / NumberOfZooms;
 
             int x0;
             int y0;
@@ -137,7 +189,7 @@ namespace Mandelbrot_Whole
 
 
 
-            for (int i = 1; i <= numberOfZooms; i++)
+            for (int i = 1; i <= NumberOfZooms; i++)
             {
                 x0 = XRangeIncremental[0] + XIncrement0 * i;
                 y0 = YRangeIncremental[0] + YIncrement0 * i;
@@ -149,6 +201,9 @@ namespace Mandelbrot_Whole
                 AdjustAspectRatioIncremental(ref x0, ref x1, ref y0, ref y1);
 
                 DrawMandelbrot(ZoomIteration,i%(TcpConnector.sockets.Count));
+                
+                
+                
                 //DrawMandelbrot(ZoomIteration,0);
 
 
@@ -156,7 +211,7 @@ namespace Mandelbrot_Whole
                 
                 ZoomIteration++;
                
-                if(i<numberOfZooms)
+                if(i<NumberOfZooms)
                 {
                     Array.Copy(centerPrev, center, center.Length);
 
