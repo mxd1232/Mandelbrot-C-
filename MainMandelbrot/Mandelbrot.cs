@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnimatedGif;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -392,6 +393,19 @@ namespace Mandelbrot_Whole
 
             return rectangle;
         }
+
+    private void gif_Click(object sender, EventArgs e)
+    {
+      using (var gif = AnimatedGif.AnimatedGif.Create("saves/output.gif", 1, 20))
+      {
+        for (var i = 0; i < this.ZoomIteration; i++)
+        {
+          var img = Image.FromFile("saves/save[" + i + "].png");
+          gif.AddFrame(img, delay: -1, quality: GifQuality.Bit8);
+        }
+      }
+
     }
+  }
 }
     

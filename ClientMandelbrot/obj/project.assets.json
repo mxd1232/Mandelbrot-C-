@@ -149,23 +149,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mateo\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Jvrek\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mateo\\Desktop\\malberout\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
+      "projectUniqueName": "C:\\Users\\Jvrek\\Desktop\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
       "projectName": "ServerMandelbrot",
-      "projectPath": "C:\\Users\\mateo\\Desktop\\malberout\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
-      "packagesPath": "C:\\Users\\mateo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mateo\\Desktop\\malberout\\Mandelbrot-C-\\ClientMandelbrot\\obj\\",
+      "projectPath": "C:\\Users\\Jvrek\\Desktop\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
+      "packagesPath": "C:\\Users\\Jvrek\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Jvrek\\Desktop\\Mandelbrot-C-\\ClientMandelbrot\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\mateo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Jvrek\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -211,7 +207,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

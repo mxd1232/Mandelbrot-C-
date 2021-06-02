@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "oMe8PnBghQCFHnXrfCYn5eHAd6WDAgCJys3cxFzfbaoAMeask50TZD6J64TQYNgH182RILNIDYKFt0GEZZU6xA==",
+  "dgSpecHash": "clDuaAafKZ2srzkjycfG6rUZJL2mfFfYwAyU3E4llN2ducPfMwU4t5WXMFvHPAY7H+TU45QAEWUHPA1wIxAY1g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mateo\\Desktop\\malberout\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
+  "projectFilePath": "C:\\Users\\Jvrek\\Desktop\\Mandelbrot-C-\\ClientMandelbrot\\ServerMandelbrot.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mateo\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
-    "C:\\Users\\mateo\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
-    "C:\\Users\\mateo\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512"
+    "C:\\Users\\Jvrek\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "C:\\Users\\Jvrek\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+    "C:\\Users\\Jvrek\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512"
   ],
   "logs": []
 }
