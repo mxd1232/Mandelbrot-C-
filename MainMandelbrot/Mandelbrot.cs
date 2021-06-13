@@ -72,7 +72,7 @@ namespace Mandelbrot_Whole
 
            string message = CreateMandelbrotRequestObject(createdFilePath);
 
-            if(i%(NumberOfZooms-1)==0)
+            if(i%(NumberOfZooms-1)==0 || TcpConnector.sockets.Count==1)
             {
                 TcpConnector.Send(scktID, createdFilePath);
                 Bitmap bitmap = TcpConnector.Recieve(scktID);
@@ -101,15 +101,7 @@ namespace Mandelbrot_Whole
                     RequestAsync(scktID, i);
                 });
                 communicationThread.Start();
-            }
-
-          /*  Thread sendThread = new Thread(TcpConnector.SendThreaded);
-            sendThread.Start(scktID);
-
-
-            Thread recieveThread = new Thread(TcpConnector.RecieveThreaded);
-            recieveThread.Start(scktID);
-          */         
+            }     
 
         }
         private static void RequestAsync(int scktID,int i)

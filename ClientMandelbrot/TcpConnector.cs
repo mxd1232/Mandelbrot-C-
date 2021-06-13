@@ -15,33 +15,44 @@ namespace ServerMandelbrot
         private static TcpListener tcpLsn;
         private static Socket socket;
 
-        
+        private static DateTime t2;
+        private static DateTime t3;
 
-
-      //  private string hostName = Dns.GetHostName();
-      //  private IPAddress[] localIP = Dns.GetHostAddresses(Dns.GetHostName));
 
         public static void Send(System.Drawing.Bitmap bitmap)
         {
-            
+            //time
+            t3 = DateTime.Now;
+            TimeSpan CommunicationTime = t3.Subtract(t2);          
+            byte[] timeBytes = BitConverter.GetBytes(CommunicationTime.TotalMilliseconds);
 
+            //bitmap
             MemoryStream ms = new MemoryStream();
-            // Save to memory using the Jpeg format
             bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-            byte[] bmpBytes = ms.GetBuffer();
+            byte[] bitmapBytes = ms.GetBuffer();
             bitmap.Dispose();
             ms.Close();
 
 
+            //add time
+
+            byte[] messageBytes = CombineByteArrays(timeBytes, bitmapBytes);
+
             try
-                {
-                socket.Send(bmpBytes);
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    Console.WriteLine("Serwer left");
-                }               
+            {
+            socket.Send(messageBytes);
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                Console.WriteLine("Serwer left");
+            }               
+        }
+        private static byte[] CombineByteArrays(byte[] first, byte[] second)
+        {
+            byte[] ret = new byte[first.Length + second.Length];
+            Buffer.BlockCopy(first, 0, ret, 0, first.Length);
+            Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
+            return ret;
         }
         public static string Recieve()
         {       
@@ -49,6 +60,7 @@ namespace ServerMandelbrot
                 try
                 {
                     int ret = socket.Receive(recievedBytes, recievedBytes.Length, 0);
+                    t2 = DateTime.Now;
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
@@ -76,14 +88,14 @@ namespace ServerMandelbrot
         public static void Serve()
         {
 
-            //  Console.WriteLine("Enter ip: ");
-            // string serverIp = Console.ReadLine();
-            string serverIp = "127.0.0.1";
+            Console.WriteLine("Enter ip: ");
+            string serverIp = Console.ReadLine();
+           // string serverIp = "127.0.0.1";
 
-            //  Console.WriteLine("Enter port: ");
+            Console.WriteLine("Enter port: ");
 
-            // int port = Convert.ToInt32(Console.ReadLine());
-            int port = 2222;
+            int port = Convert.ToInt32(Console.ReadLine());
+         //   int port = 2222;
 
             while (true)
             {

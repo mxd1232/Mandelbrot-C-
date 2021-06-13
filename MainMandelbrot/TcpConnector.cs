@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,14 +12,13 @@ using System.Threading.Tasks;
 
 namespace Mandelbrot_Whole
 {
-    class TcpConnector
+    public class TcpConnector
     {
         public static List<Socket> sockets = new List<Socket>();
-      
+        private static DateTime[] t1 = new DateTime[100];
+        private static DateTime[] t4 = new DateTime[100];
 
-        [ThreadStatic]
-        static Bitmap recievedBitmap;
-
+       
         public static Bitmap Recieve(int scktID)
         {
             Bitmap bmpReturn = null;
@@ -27,9 +27,24 @@ namespace Mandelbrot_Whole
             try
             {
                 int ret = sockets[scktID].Receive(recievedBytes, recievedBytes.Length, 0);
+                t4[scktID] = DateTime.Now;
+                byte[] timeBytes = recievedBytes.Take(8).ToArray();
+
+                double computiationTimeInMiliseconds = BitConverter.ToDouble(timeBytes,0);
+
+                TimeSpan fullTime = t4[scktID].Subtract(t1[scktID]);
+                double communicationTimeInMiliseconds = fullTime.TotalMilliseconds - computiationTimeInMiliseconds;
+                Debug.WriteLine("full time: " + fullTime + 
+                    " Time of computation: " + computiationTimeInMiliseconds + 
+                    " Time of communication: " + communicationTimeInMiliseconds +
+                    " socketID:" +scktID);
+              
+
+             
+                byte[] bitmapBytes = recievedBytes.Skip(8).ToArray();
 
 
-                MemoryStream memoryStream = new MemoryStream(recievedBytes);
+                MemoryStream memoryStream = new MemoryStream(bitmapBytes);
                 memoryStream.Position = 0;
               //  bmpReturn = new Bitmap(memoryStream);
                 bmpReturn = (Bitmap)Bitmap.FromStream(memoryStream);
@@ -50,44 +65,11 @@ namespace Mandelbrot_Whole
 
           
         }
-        /*
-        public static void RecieveThreaded(object scktID)
-        {
-            Bitmap bmpReturn = null;
-
-            Byte[] recievedBytes = new Byte[1000000];
-            try
-            {
-                int ret = sockets[(int)scktID].Receive(recievedBytes, recievedBytes.Length, 0);
-
-
-                MemoryStream memoryStream = new MemoryStream(recievedBytes);
-                memoryStream.Position = 0;
-                //  bmpReturn = new Bitmap(memoryStream);
-                bmpReturn = (Bitmap)Bitmap.FromStream(memoryStream);
-
-
-                memoryStream.Close();
-                memoryStream = null;
-
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                Console.WriteLine("Serwer left");
-            }
-
-
-
-            recievedBitmap= bmpReturn;
-
-
-        }
-        */
-
         public static void Send(int scktID,string createdFilePath)
         {
             try
             {
+                t1[scktID] = DateTime.Now;
                 sockets[scktID].SendFile(createdFilePath);
               
             }
@@ -97,23 +79,6 @@ namespace Mandelbrot_Whole
             }
 
         }
-
-  /*      public static void SendThreaded(object scktID)
-        {
-            try
-            {
-                sockets[(int)scktID].SendFile(ConverterJSON.CreatedFilePath);
-
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                Console.WriteLine("Serwer left");
-            }
-
-        }
-  */
-
-
         private static bool Connect(string ipAddres, int port)
         {
             //"127.0.0.1" - ip
