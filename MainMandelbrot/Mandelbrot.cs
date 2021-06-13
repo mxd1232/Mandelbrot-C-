@@ -1,10 +1,14 @@
-﻿using System;
+﻿using AnimatedGif;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +21,7 @@ namespace Mandelbrot_Whole
         static HashSet<int> TakenSocketIds = new HashSet<int>();
 
 
-        int NumberOfZooms = 10;
+        public int FramesPerZoom = 10;
         int ZoomIteration = 0;
 
         public static double[] centerPrev  = { 0,0 };
@@ -27,8 +31,8 @@ namespace Mandelbrot_Whole
         double zoom = 1;
         double zoomPrev;
 
-        int WidthPixel;
-        int HeightPixel;
+        public int WidthPixel;
+        public int HeightPixel;
 
         int[] XRangeIncremental = new int[] { 0, 0 };
         int[] YRangeIncremental = new int[] { 0, 0 };
@@ -46,7 +50,7 @@ namespace Mandelbrot_Whole
         {
             InitializeComponent();
             
-            TcpConnector.ConnectToTCP("127.0.0.1",2222);
+          //  TcpConnector.ConnectToTCP("127.0.0.1",2222);
 
         }
         private void Mandelbrot_Shown(object sender, EventArgs e)
@@ -61,57 +65,60 @@ namespace Mandelbrot_Whole
             YRangeIncremental[1] = HeightPixel;
 
 
-            DrawMandelbrot(ZoomIteration, 0);
-
-            ZoomIteration++;
+     
         }
         private void DrawMandelbrot(int i, int scktID)
         {
-            string createdFilePath = "../../json/created.json[" + i + "]";
-
-
-           string message = CreateMandelbrotRequestObject(createdFilePath);
-
-            if(i%(NumberOfZooms-1)==0 || TcpConnector.sockets.Count==1)
+            if (IsRegularComputation(i))
             {
-                TcpConnector.Send(scktID, createdFilePath);
-                Bitmap bitmap = TcpConnector.Recieve(scktID);
-
-                bitmap.Save("saves/save[" + i + "].png", ImageFormat.Png);
-
-
-                pictureBox1.Image = bitmap;
+                ComputeRegular(i, scktID);
             }
-
             else
             {
-                while(TakenSocketIds.Contains(scktID))
-                {
-                    
-                    scktID++;
-                    if(scktID==TcpConnector.sockets.Count())
-                    {
-                        scktID = 0;
-                    }
-                    Thread.Sleep(10);
-                }
-
-                Thread communicationThread = new Thread(delegate ()
-                {
-                    RequestAsync(scktID, i);
-                });
-                communicationThread.Start();
+                ComputeParalel(i, scktID);
             }     
-
         }
-        private static void RequestAsync(int scktID,int i)
+        private bool IsRegularComputation(int i)
+        {
+            return (i % (FramesPerZoom - 1) == 0 || TcpConnector.Sockets.Count == 1);
+        }
+
+        private void ComputeRegular(int i, int scktID)
+        {
+                string createdFilePath = "../../json/created[" + i + "].json";
+                string message = CreateMandelbrotRequestObject(createdFilePath);
+                TcpConnector.Send(scktID, createdFilePath);
+
+                Bitmap bitmap = TcpConnector.Recieve(scktID);
+                bitmap.Save("saves/save[" + i + "].png", ImageFormat.Png);
+                pictureBox1.Image = bitmap;       
+        }
+        private void ComputeParalel(int i,int scktID)
+        {
+            while (TakenSocketIds.Contains(scktID))
+            {
+
+                scktID++;
+                if (scktID == TcpConnector.Sockets.Count())
+                {
+                    scktID = 0;
+                }
+                Thread.Sleep(10);
+            }
+
+            Thread communicationThread = new Thread(delegate ()
+            {
+                RequestParalel(scktID, i);
+            });
+            communicationThread.Start();
+        }
+        private static void RequestParalel(int scktID,int i)
         {
 
 
             TakenSocketIds.Add(scktID);
 
-            string createdFilePath = "../../json/created.json[" + i + "]";
-
+            string createdFilePath = "../../json/created[" + i + "].json";
             TcpConnector.Send(scktID, createdFilePath);
             Bitmap bitmap = TcpConnector.Recieve(scktID);
             bitmap.Save("saves/save[" + i + "].png", ImageFormat.Png);
@@ -162,11 +169,11 @@ namespace Mandelbrot_Whole
         {
             
 
-            int XIncrement0 = (XRange[0] - XRangeIncremental[0]) / NumberOfZooms;
-            int YIncrement0 = (YRange[0] - YRangeIncremental[0]) / NumberOfZooms;
+            int XIncrement0 = (XRange[0] - XRangeIncremental[0]) / FramesPerZoom;
+            int YIncrement0 = (YRange[0] - YRangeIncremental[0]) / FramesPerZoom;
 
-            int XIncrement1 = (XRangeIncremental[1] - XRange[1]) / NumberOfZooms;
-            int YIncrement1 = (YRangeIncremental[1] - YRange[1]) / NumberOfZooms;
+            int XIncrement1 = (XRangeIncremental[1] - XRange[1]) / FramesPerZoom;
+            int YIncrement1 = (YRangeIncremental[1] - YRange[1]) / FramesPerZoom;
 
             int x0;
             int y0;
@@ -181,7 +188,7 @@ namespace Mandelbrot_Whole
 
 
 
-            for (int i = 1; i <= NumberOfZooms; i++)
+            for (int i = 1; i <= FramesPerZoom; i++)
             {
                 x0 = XRangeIncremental[0] + XIncrement0 * i;
                 y0 = YRangeIncremental[0] + YIncrement0 * i;
@@ -192,18 +199,15 @@ namespace Mandelbrot_Whole
                 ZoomIncrementaly(x0, y0, x1, y1);
                 AdjustAspectRatioIncremental(ref x0, ref x1, ref y0, ref y1);
 
-                DrawMandelbrot(ZoomIteration,i%(TcpConnector.sockets.Count));
-                
-                
+                DrawMandelbrot(ZoomIteration,i%(TcpConnector.Sockets.Count));
+                             
                 
                 //DrawMandelbrot(ZoomIteration,0);
-
-
                 // Refresh(); z tą funkcja wyswietlane sa kolejne klatki
                 
                 ZoomIteration++;
                
-                if(i<NumberOfZooms)
+                if(i<FramesPerZoom)
                 {
                     Array.Copy(centerPrev, center, center.Length);
 
@@ -383,6 +387,12 @@ namespace Mandelbrot_Whole
                 if(TcpConnector.ConnectToTCP(serverIP, serverPort))
                 {
                     statusLabel.Text = "Connected";
+
+                    if(TcpConnector.Sockets.Count==1)
+                    {
+                           DrawMandelbrot(ZoomIteration, 0);
+                           ZoomIteration++;
+                    }
                 }
                 else
                 {
@@ -434,6 +444,84 @@ namespace Mandelbrot_Whole
             rectangle.Height = Math.Abs(rectanglePoint.Y - rectangleEndpoint.Y);
 
             return rectangle;
+        }
+
+        private void animationButton_Click(object sender, EventArgs e)
+        {
+            using (var gif = AnimatedGif.AnimatedGif.Create("saves/output.gif", 1, 20))
+            {
+                for (var i = 0; i < this.ZoomIteration; i++)
+                {
+                    var img = Image.FromFile("saves/save[" + i + "].png");
+                    gif.AddFrame(img, delay: -1, quality: GifQuality.Bit8);
+                }
+            }
+        }
+
+        private void speedTestButton_Click(object sender, EventArgs e)
+        {
+
+            if(TcpConnector.SpeedTests!=null)
+            {
+                WriteCSV<SpeedTest>(TcpConnector.SpeedTests, "saves/speedTest.csv");
+            }
+        }
+        public void WriteCSV<T>(IEnumerable<T> items, string path)
+        {
+            Type itemType = typeof(T);
+            var props = itemType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .OrderBy(p => p.Name);
+
+            using (var writer = new StreamWriter(path))
+            {
+                writer.WriteLine(string.Join(", ", props.Select(p => p.Name)));
+
+                foreach (var item in items)
+                {
+                    writer.WriteLine(string.Join(", ", props.Select(p => p.GetValue(item, null))));
+                }
+            }
+        }
+
+        private void changeButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (framesText.Text != null && framesText.Text != "" && Convert.ToInt32(framesText.Text) >1)
+                {
+                    FramesPerZoom = Convert.ToInt32(framesText.Text);
+                }
+                if (iterationsText.Text != null && iterationsText.Text != "")
+                {
+                    maxIterations = Convert.ToInt32(iterationsText.Text);
+                }
+                if (heightText.Text != null && heightText.Text != "")
+                {
+                    pictureBox1.Height = Convert.ToInt32(heightText.Text);
+                    HeightPixel = pictureBox1.Height;
+                }
+                if (widthText.Text != null && widthText.Text != "")
+                {
+                    pictureBox1.Width = Convert.ToInt32(widthText.Text);
+                    WidthPixel = pictureBox1.Width;
+                }
+            }
+            catch(Exception exe)
+            {
+                Debug.WriteLine(exe);
+            }
+
+        }
+
+        private void generateAllButton_Click(object sender, EventArgs e)
+        {
+            for(int i=0;i<ZoomIteration-1;i++)
+            {
+
+
+                //load json[i]
+                //zoom to [json i+1]
+            }
         }
     }
 }

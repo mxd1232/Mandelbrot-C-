@@ -14,10 +14,11 @@ namespace Mandelbrot_Whole
 {
     public class TcpConnector
     {
-        public static List<Socket> sockets = new List<Socket>();
+        public static List<Socket> Sockets = new List<Socket>();
         private static DateTime[] t1 = new DateTime[100];
         private static DateTime[] t4 = new DateTime[100];
 
+        public static List<SpeedTest> SpeedTests = new List<SpeedTest>();
        
         public static Bitmap Recieve(int scktID)
         {
@@ -26,19 +27,29 @@ namespace Mandelbrot_Whole
             Byte[] recievedBytes = new Byte[1000000];
             try
             {
-                int ret = sockets[scktID].Receive(recievedBytes, recievedBytes.Length, 0);
+                int ret = Sockets[scktID].Receive(recievedBytes, recievedBytes.Length, 0);
                 t4[scktID] = DateTime.Now;
                 byte[] timeBytes = recievedBytes.Take(8).ToArray();
 
-                double computiationTimeInMiliseconds = BitConverter.ToDouble(timeBytes,0);
+                double computiationTimeInSeconds = BitConverter.ToDouble(timeBytes,0);
 
                 TimeSpan fullTime = t4[scktID].Subtract(t1[scktID]);
-                double communicationTimeInMiliseconds = fullTime.TotalMilliseconds - computiationTimeInMiliseconds;
-                Debug.WriteLine("full time: " + fullTime + 
+                double communicationTimeInSeconds = fullTime.TotalSeconds - computiationTimeInSeconds;
+
+
+                SpeedTests.Add(new SpeedTest()
+                {
+                    FullTime = fullTime.TotalSeconds,
+                    CommunicationTime = communicationTimeInSeconds,
+                    ComputationTime = computiationTimeInSeconds,
+                    ScktID = scktID
+                });
+
+             /*   Debug.WriteLine("full time: " + fullTime + 
                     " Time of computation: " + computiationTimeInMiliseconds + 
                     " Time of communication: " + communicationTimeInMiliseconds +
                     " socketID:" +scktID);
-              
+              */
 
              
                 byte[] bitmapBytes = recievedBytes.Skip(8).ToArray();
@@ -70,7 +81,7 @@ namespace Mandelbrot_Whole
             try
             {
                 t1[scktID] = DateTime.Now;
-                sockets[scktID].SendFile(createdFilePath);
+                Sockets[scktID].SendFile(createdFilePath);
               
             }
             catch (System.Net.Sockets.SocketException)
@@ -102,7 +113,7 @@ namespace Mandelbrot_Whole
             if (sckt.Connected)
             {
                 Console.WriteLine(" Poprawne polączenie ");
-                sockets.Add(sckt);
+                Sockets.Add(sckt);
                 return true;
             }
             else

@@ -24,7 +24,7 @@ namespace ServerMandelbrot
             //time
             t3 = DateTime.Now;
             TimeSpan CommunicationTime = t3.Subtract(t2);          
-            byte[] timeBytes = BitConverter.GetBytes(CommunicationTime.TotalMilliseconds);
+            byte[] timeBytes = BitConverter.GetBytes(CommunicationTime.TotalSeconds);
 
             //bitmap
             MemoryStream ms = new MemoryStream();

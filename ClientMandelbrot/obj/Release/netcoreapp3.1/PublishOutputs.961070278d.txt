@@ -1,0 +1,10 @@
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\ServerMandelbrot.exe
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\ServerMandelbrot.dll
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\ServerMandelbrot.deps.json
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\ServerMandelbrot.runtimeconfig.json
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\ServerMandelbrot.pdb
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\Microsoft.Win32.SystemEvents.dll
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\System.Drawing.Common.dll
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\Mikołaj\Desktop\MandelbrotRepo\Mandelbrot-C-\ClientMandelbrot\bin\publish\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
