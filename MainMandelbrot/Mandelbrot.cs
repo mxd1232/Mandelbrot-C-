@@ -75,7 +75,9 @@ namespace Mandelbrot_Whole
             }
             else
             {
+                
                 ComputeParalel(i, scktID);
+            
             }     
         }
         private bool IsRegularComputation(int i)
@@ -184,9 +186,9 @@ namespace Mandelbrot_Whole
 
             Array.Copy(center, centerPrev, center.Length);
             zoomPrev = zoom;
-           
 
 
+            DateTime fullTime1 = DateTime.Now;
 
             for (int i = 1; i <= FramesPerZoom; i++)
             {
@@ -217,6 +219,19 @@ namespace Mandelbrot_Whole
             }
             rectanglePoint = new Point(0,0);
             rectangleEndpoint = new Point(0, 0);
+
+
+            DateTime fullTime2 = DateTime.Now;
+            TimeSpan timeSpan = fullTime2.Subtract(fullTime1);
+
+            string path = @"saves/fullSpeedOfZoom.txt";
+            string zoomInfo = "Frames per zoom: " + FramesPerZoom +
+                " max iterations: " +maxIterations+
+                " height: " + HeightPixel +
+                " width: " + WidthPixel +
+                " time in seconds: " + timeSpan.TotalSeconds.ToString() + "\n";
+
+            File.AppendAllText(path,zoomInfo);
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -497,7 +512,9 @@ namespace Mandelbrot_Whole
                 }
                 if (heightText.Text != null && heightText.Text != "")
                 {
-                    pictureBox1.Height = Convert.ToInt32(heightText.Text);
+                    int height = Convert.ToInt32(heightText.Text);
+
+                    pictureBox1.Height = height;
                     HeightPixel = pictureBox1.Height;
                 }
                 if (widthText.Text != null && widthText.Text != "")
