@@ -530,16 +530,6 @@ namespace Mandelbrot_Whole
 
         }
 
-        private void generateAllButton_Click(object sender, EventArgs e)
-        {
-            for(int i=0;i<ZoomIteration-1;i++)
-            {
-
-
-                //load json[i]
-                //zoom to [json i+1]
-            }
-        }
     }
 }
     

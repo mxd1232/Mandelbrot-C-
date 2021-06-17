@@ -49,7 +49,6 @@ namespace Mandelbrot_Whole
             this.heightText = new System.Windows.Forms.TextBox();
             this.widthText = new System.Windows.Forms.TextBox();
             this.changeButton = new System.Windows.Forms.Button();
-            this.generateAllButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -130,7 +129,7 @@ namespace Mandelbrot_Whole
             // 
             // sendingButton
             // 
-            this.sendingButton.Location = new System.Drawing.Point(723, 601);
+            this.sendingButton.Location = new System.Drawing.Point(842, 601);
             this.sendingButton.Name = "sendingButton";
             this.sendingButton.Size = new System.Drawing.Size(75, 23);
             this.sendingButton.TabIndex = 8;
@@ -236,22 +235,11 @@ namespace Mandelbrot_Whole
             this.changeButton.UseVisualStyleBackColor = true;
             this.changeButton.Click += new System.EventHandler(this.changeButton_Click);
             // 
-            // generateAllButton
-            // 
-            this.generateAllButton.Location = new System.Drawing.Point(842, 601);
-            this.generateAllButton.Name = "generateAllButton";
-            this.generateAllButton.Size = new System.Drawing.Size(75, 23);
-            this.generateAllButton.TabIndex = 20;
-            this.generateAllButton.Text = "Generate";
-            this.generateAllButton.UseVisualStyleBackColor = true;
-            this.generateAllButton.Click += new System.EventHandler(this.generateAllButton_Click);
-            // 
             // Mandelbrot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(939, 728);
-            this.Controls.Add(this.generateAllButton);
             this.Controls.Add(this.changeButton);
             this.Controls.Add(this.widthText);
             this.Controls.Add(this.heightText);
@@ -304,7 +292,6 @@ namespace Mandelbrot_Whole
         private System.Windows.Forms.TextBox heightText;
         private System.Windows.Forms.TextBox widthText;
         private System.Windows.Forms.Button changeButton;
-        private System.Windows.Forms.Button generateAllButton;
     }
 }
 
